@@ -1,0 +1,6 @@
+name = "Test"
+toggle = true
+
+[[scripts]]
+name = "test_script"
+path = "./examples/test_script.lua"
