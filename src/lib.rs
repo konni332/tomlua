@@ -1,11 +1,16 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
+use mlua::Lua;
 use mlua::Value;
 use serde::{Deserialize, Serialize};
+
+pub mod error;
 
 // reexports
 pub use tomlua_macros::TomluaExecute;
 pub use tomlua_macros::tomlua_config;
+
+use crate::error::lua_error_message;
 
 // scripts
 
@@ -145,6 +150,11 @@ impl Script {
     /// assert_eq!(s.inline().unwrap(), "print('hi')");
     /// ```
     pub fn inline(&self) -> Option<&String> {
+        if let Some(inline) = &self.inline
+            && inline.is_empty()
+        {
+            return None;
+        }
         self.inline.as_ref()
     }
 
@@ -165,6 +175,36 @@ impl Script {
     /// ```
     pub fn name(&self) -> &str {
         &self.name
+    }
+
+    pub fn validate(&self) -> Result<(), crate::error::Error> {
+        match self.inline() {
+            Some(inline) => return self.validate_inline(&inline),
+            None => {}
+        }
+        match self.path() {
+            Some(path) => Self::validate_path(path),
+            None => Err(crate::error::Error::EmptyScript(self.name().to_string())),
+        }
+    }
+    fn validate_path<P: AsRef<Path>>(path: P) -> Result<(), crate::error::Error> {
+        if !path.as_ref().exists() {
+            return Err(crate::error::Error::InvalidPath(
+                path.as_ref().to_string_lossy().to_string(),
+            ));
+        }
+        Ok(())
+    }
+    fn validate_inline(&self, inline: &str) -> Result<(), crate::error::Error> {
+        let lua = Lua::new();
+        lua.load(inline).into_function().map_err(|error| {
+            let error = lua_error_message(&error);
+            crate::error::Error::InvalidInline {
+                error,
+                script: self.name().to_string(),
+            }
+        })?;
+        Ok(())
     }
 }
 

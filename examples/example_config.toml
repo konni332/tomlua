@@ -1,5 +1,5 @@
 name = "Test"
-toggle = false
+toggle = true
 
 [[scripts]]
 name = "basic_script"
@@ -14,3 +14,12 @@ end
 [[scripts]]
 name = "self_mutating"
 path = "./examples/self_mutating.lua"
+
+[[scripts]]
+name = "faulty"
+inline = """
+if toggle then
+    print("Toggle is true")
+else
+    print("Toggle is false")
+"""
