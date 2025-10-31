@@ -13,6 +13,7 @@ struct MyConfig {
 fn main() {
     let cfg_str = std::fs::read_to_string("./examples/example_config.toml")
         .expect("Failed to read example_config.toml");
-    let cfg: MyConfig = toml::from_str(&cfg_str).expect("Failed to parse example_config.toml");
-    cfg.execute_script("basic_script").expect("Script failed!");
+    let mut cfg: MyConfig = toml::from_str(&cfg_str).expect("Failed to parse example_config.toml");
+    cfg.execute_script("basic_script", None)
+        .expect("Script failed!");
 }

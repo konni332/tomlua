@@ -1,3 +1,5 @@
+update = true
+
 if toggle ~= nil then
 	toggle = not toggle
 	print("Toggle set to " .. tostring(toggle))

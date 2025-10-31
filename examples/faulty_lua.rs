@@ -12,8 +12,8 @@ struct MyConfig {
 
 fn main() -> anyhow::Result<()> {
     let cfg_str = std::fs::read_to_string("./examples/example_config.toml")?;
-    let cfg: MyConfig = toml::from_str(&cfg_str)?;
-    cfg.execute_script("faulty")?;
+    let mut cfg: MyConfig = toml::from_str(&cfg_str)?;
+    cfg.execute_script("faulty", None)?;
     let cfg_str = toml::to_string(&cfg)?;
     std::fs::write("./examples/example_config.toml", cfg_str)?;
     Ok(())
