@@ -3,7 +3,7 @@ pub enum Error {
     #[error("Script '{script}' failed: {error}")]
     LuaRunTimeError { error: String, script: String },
 
-    #[error("Empty script error: neither inline nor path found for sciprt '{0}'")]
+    #[error("Empty script error: neither inline nor path found for script '{0}'")]
     EmptyScript(String),
 
     #[error("I/O error: {0}")]
