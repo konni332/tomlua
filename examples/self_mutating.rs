@@ -7,6 +7,7 @@ use tomlua::tomlua_config;
 #[derive(Serialize, Deserialize)]
 struct MyConfig {
     name: String,
+    #[lua_global]
     toggle: bool,
 }
 
